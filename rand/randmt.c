@@ -64,7 +64,7 @@ mt_gen_(struct mt *mt)
     for (i = 0; i < MT_UTNLEN; i++) {
         y = (utn[i] & MT_BIT31) + (utn[(i+1) % MT_UTNLEN] & MT_BITS0TO30);
         utn[i] = utn[(i + 397) % MT_UTNLEN] ^ (y >> 1);
-        if (y & 1)  /* If odd */
+        if ((unsigned)y & 1)  /* If odd */
             utn[i] ^= MT_MAGICXOR;
     }
 }
@@ -111,5 +111,5 @@ mtrand_dispose(RAND_MT *mt)
 int 
 mtrand_get(RAND_MT *mt)
 {
-    return mt_rand_(mt);
+    return mt_rand_(mt) & MT_BITS0TO30;
 }
