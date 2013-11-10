@@ -33,22 +33,24 @@
 #define MT_BIT31        0x80000000
 #define MT_BITS0TO30    0x7FFFFFFF
 
+typedef int32_t mt_num;
+
 struct mt {
-    int32_t         utn[MT_UTNLEN];
+    mt_num           utn[MT_UTNLEN];
     size_t          idx;
 };
 
 inline static void mt_gen_(struct mt *mt);
 
 inline static void 
-mt_init_(struct mt *mt, int32_t seed)
+mt_init_(struct mt *mt, mt_num seed)
 {
     size_t i;
-    int32_t *utn = mt->utn;
+    mt_num *utn = mt->utn;
     
     utn[0] = seed;
     for (i = 1; i < MT_UTNLEN; i++) {
-        uint32_t tmp = (utn[i-1] ^ (utn[i-1] >> MT_SHIFTA)) + i;
+        mt_num tmp = (utn[i-1] ^ (utn[i-1] >> MT_SHIFTA)) + i;
         utn[i] = MT_MULTIPLIER * tmp;
     }
     mt->idx = 0;
@@ -58,13 +60,13 @@ inline static void
 mt_gen_(struct mt *mt)
 {
     size_t i;
-    int32_t *utn = mt->utn;
-    int32_t y;
+    mt_num *utn = mt->utn;
+    mt_num y;
 
     for (i = 0; i < MT_UTNLEN; i++) {
         y = (utn[i] & MT_BIT31) + (utn[(i+1) % MT_UTNLEN] & MT_BITS0TO30);
         utn[i] = utn[(i + 397) % MT_UTNLEN] ^ (y >> 1);
-        if ((unsigned)y & 1)  /* If odd */
+        if (y & 1)  /* If odd */
             utn[i] ^= MT_MAGICXOR;
     }
 }
@@ -72,7 +74,7 @@ mt_gen_(struct mt *mt)
 inline static uint32_t 
 mt_rand_(struct mt *mt)
 {
-    int32_t y;
+    mt_num y;
     
     if (mt->idx == 0)
         mt_gen_(mt);
