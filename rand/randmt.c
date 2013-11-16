@@ -45,8 +45,8 @@
 
 /* The question remains whether or not using unsinged long is faster than
  * using uint32_t. If, for example, a 64-bit machine has to shift unaligned
- * uint32_t values (to align them) then perhaps using unsinged long is better.
- * Because the question remains answered I am leaving everything as unsigned
+ * uint32_t values (to align them) then perhaps using unsigned long is better.
+ * Because the question remains unanswered I am leaving everything as unsigned
  * long for now
  */
 #if ULONG_MAX >> 32
@@ -73,6 +73,10 @@ mt_init_(struct mt *mt, unsigned long seed)
         utn[i] = KNUTH_MULTIPLIER  * (utn[i-1] ^ (utn[i-1] >> KNUTH_SHIFT)) + i;
         MASKRESULT(utn[i], utn[i]);
     }
+    
+    /* Set to i (MT_UTNLEN) so that first call to mt_rand_() triggers call
+     * to mt_gen_()
+     */
     mt->idx = i;
 }
 
