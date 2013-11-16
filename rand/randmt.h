@@ -11,7 +11,7 @@
 #ifndef Z_RAND_MT
 #define Z_RAND_MT
 
-#define RAND_MT_MAX 0x7fffffff
+#define RAND_MT_MAX 0xffffffff
 
 /* "Handle" for Mersenne Twister object */
 typedef struct mt RAND_MT;
