@@ -17,7 +17,7 @@ int main(void)
         exit(EXIT_FAILURE);
     }
    
-    for (i = 0; i < 20; i++) {
+    for (i = 0; i < 2000; i++) {
         int x = mtrand_get(mt);
         count[x%2]++;
         assert(x <= RAND_MT_MAX);

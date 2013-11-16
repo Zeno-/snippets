@@ -23,6 +23,6 @@ RAND_MT *mtrand_new(unsigned long seed);
 void mtrand_dispose(RAND_MT *mt);
 
 /* Get random number. */
-int mtrand_get(RAND_MT *mt);
+unsigned long mtrand_get(RAND_MT *mt);
 
 #endif /* Z_RAND_MT */
