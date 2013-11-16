@@ -65,11 +65,16 @@ inline static void
 mt_gen_(struct mt *mt)
 {
     int i;
-    unsigned long *utn = mt->utn,
-                  y;
-    
+    unsigned long *utn = mt->utn, y;    
     static unsigned long magic[2] = {0UL, MT_MATRIX};
 
+    /* Note: The "reference algorithm" checks if mt_init_() has been called and
+     *       if not calls mt_init_() with a seed of 5489UL. Because of the
+     *       way this implementation is designed it's not possible for 
+     *       mt_init_() to have not been called because it gets called by
+     *       mtrand_new() which creates the user program MT object
+     */
+        
     for (i = 0; i < MT_UTNLEN - MT_MAGICN; i++) {
         y = (utn[i] & MT_BIT31) | (utn[i + 1] & MT_BITS0TO30);
         utn[i] = utn[i + MT_MAGICN] ^ (y >> 1) ^ magic[y & 0x1];

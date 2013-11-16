@@ -10,7 +10,7 @@ int main(void)
     size_t i;
     int count[2] = {0};
     
-    //mt = mtrand_new(time(NULL));
+    /* mt = mtrand_new(time(NULL)); */
     mt = mtrand_new(10);
     if (!mt) {
         fputs("Could not initialise RNG. Aborting.", stderr);
