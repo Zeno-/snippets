@@ -17,28 +17,44 @@
 #include "randmt.h"
 #include <stdint.h>
 #include <stdlib.h>
-
+#include <limits.h>
 
 /**********************************************************************
  * Private
  **********************************************************************/
-#define MT_UTNLEN       624
-#define MT_MAGICN       397
-#define MT_MULTIPLIER   0x6C078965UL
-#define MT_MATRIX       0x9908b0dfUL
 
-#define MT_SHIFTA       30
-#define MT_SHIFTB       11
-#define MT_SHIFTC       7
-#define MT_SHIFTD       15
-#define MT_SHIFTE       18
+/* See Knuth, TAOCP Vol 2, pp. 106-107 (line 13 of table)
+ */
+#define KNUTH_MULTIPLIER    1812433253
+#define KNUTH_SHIFT         30
 
-#define MT_MAGICMASKA   0x9d2c5680UL
-#define MT_MAGICMASKB   0xefc60000UL
+#define MT_UTNLEN           624
+#define MT_MAGICN           397
+#define MT_MATRIX           0x9908b0df
 
-#define MT_BIT31        0x80000000UL
-#define MT_BITS0TO30    0x7FFFFFFFUL
-#define MT_MASK32       0xFFFFFFFFUL
+#define MT_SHIFTB           11
+#define MT_SHIFTC           7
+#define MT_SHIFTD           15
+#define MT_SHIFTE           18
+
+#define MT_MAGICMASKA       0x9d2c5680
+#define MT_MAGICMASKB       0xefc60000
+
+#define MT_BIT31            0x80000000
+#define MT_BITS0TO30        0x7FFFFFFF
+#define MT_MASK32           0xFFFFFFFF
+
+/* The question remains whether or not using unsinged long is faster than
+ * using uint32_t. If, for example, a 64-bit machine has to shift unaligned
+ * uint32_t values (to align them) then perhaps using unsinged long is better.
+ * Because the question remains answered I am leaving everything as unsigned
+ * long for now
+ */
+#if ULONG_MAX >> 32
+#   define MASKRESULT(d,s) ( (d) = (s) & MT_MASK32 )
+#else
+#   define MASKRESULT(d,s) (void)(0)
+#endif
 
 struct mt {
     unsigned long   utn[MT_UTNLEN];
@@ -55,8 +71,8 @@ mt_init_(struct mt *mt, unsigned long seed)
     
     utn[0] = seed & MT_MASK32;
     for (i = 1; i < MT_UTNLEN; i++) {
-        utn[i] = MT_MULTIPLIER  * (utn[i-1] ^ (utn[i-1] >> MT_SHIFTA)) + i;
-        utn[i] &= MT_MASK32;
+        utn[i] = KNUTH_MULTIPLIER  * (utn[i-1] ^ (utn[i-1] >> KNUTH_SHIFT)) + i;
+        MASKRESULT(utn[i], utn[i]);
     }
     mt->idx = i;
 }
