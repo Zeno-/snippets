@@ -15,7 +15,6 @@
  */
 
 #include "randmt.h"
-#include <stdint.h>
 #include <stdlib.h>
 #include <limits.h>
 
