@@ -4,11 +4,14 @@
 #include <assert.h>
 #include "randmt.h"
 
+#define NUM 100000000
+
 int main(void)
 {
     RAND_MT *mt;    
     size_t i;
     int count[2] = {0};
+    volatile unsigned long x;
     
     /* mt = mtrand_new(time(NULL)); */
     mt = mtrand_new(10);
@@ -16,16 +19,13 @@ int main(void)
         fputs("Could not initialise RNG. Aborting.", stderr);
         exit(EXIT_FAILURE);
     }
-   
-    for (i = 0; i < 2000; i++) {
-        int x = mtrand_get(mt);
-        count[x%2]++;
-        assert(x <= RAND_MT_MAX);
-        printf("%d\n", x);
-    }
     
-    printf("0s: %d  1s: %d\n", count[0], count[1]);
-    
+    printf("Generating %lu random numbers\n", NUM);
+    for (i = 0; i < NUM; i++)
+        printf("%lu\n", mtrand_get(mt));
+    printf("Done\n");
+
+
     mtrand_dispose(mt);
     return EXIT_SUCCESS;
 }
